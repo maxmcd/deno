@@ -19,8 +19,8 @@ import * as deno from "./deno";
 const EOL = "\n";
 
 // tslint:disable-next-line:no-any
-type AmdFactory = (...args: any[]) => undefined | object;
-type AmdDefine = (deps: string[], factory: AmdFactory) => void;
+export type AmdFactory = (...args: any[]) => undefined | object;
+export type AmdDefine = (deps: string[], factory: AmdFactory) => void;
 
 // Uncaught exceptions are sent to window.onerror by v8worker2.
 // https://git.io/vhOsf
@@ -59,7 +59,7 @@ export function setup(mainJs: string, mainMap: string): void {
 // FileModule.load(). FileModules are NOT executed upon first load, only when
 // compileAndRun is called.
 export class FileModule {
-  scriptVersion: string = undefined;
+  scriptVersion: string;
   readonly exports = {};
 
   private static readonly map = new Map<string, FileModule>();
@@ -80,7 +80,7 @@ export class FileModule {
 
   compileAndRun(): void {
     if (!this.outputCode) {
-      // If there is no cached outputCode, the compile the code.
+      // If there is no cached outputCode, then compile the code.
       util.assert(
         this.sourceCode != null && this.sourceCode.length > 0,
         `Have no source code from ${this.fileName}`
@@ -149,7 +149,7 @@ export function resolveModule(
   let fetchResponse;
   try {
     fetchResponse = os.codeFetch(moduleSpecifier, containingFile);
-  } catch(e) {
+  } catch (e) {
     // TODO Only catch "no such file or directory" errors. Need error codes.
     return null;
   }
